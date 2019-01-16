@@ -1,6 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+// convention is capital
+const Post = require('./models/post');
+
+// marks the beggining
 const app = express();
+
+//mongoose.connect()
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -15,7 +23,11 @@ app.use((req, res, next) => {
 });
 
 app.post('/api/posts', (req, res, next) => {
-  const post = req.body;
+  const post = new Post({
+    title: req.body.title,
+    content: req.body.content
+  });
+
   console.log(post);
   res.status(201).json({
     message: 'Post added successfully'
