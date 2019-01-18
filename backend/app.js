@@ -8,7 +8,10 @@ const Post = require('./models/post');
 // marks the beggining
 const app = express();
 
-//mongoose.connect()
+mongoose.connect(
+  'mongodb://localhost:27017/mean-app',
+  { useNewUrlParser: true }
+);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
