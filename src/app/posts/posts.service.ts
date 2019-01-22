@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Post } from './post.model';
 import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
@@ -12,12 +13,25 @@ export class PostsService {
   constructor(private http: HttpClient) {}
 
   public getPosts() {
-    this.http.get<{ message: string; posts: Post[] }>(this.url).subscribe(postData => {
-      this.posts = postData.posts;
+    this.http
+      .get<{ message: string; posts: any }>(this.url)
+      .pipe(
+        map(postData => {
+          return postData.posts.map(post => {
+            return {
+              title: post.title,
+              content: post.content,
+              id: post._id
+            };
+          });
+        })
+      )
+      .subscribe(transformedPost => {
+        this.posts = transformedPost;
 
-      // ... created copy of array
-      this.postsUpdated.next([...this.posts]);
-    });
+        // ... created copy of array
+        this.postsUpdated.next([...this.posts]);
+      });
   }
 
   public addPost(title: string, content: string): void {
@@ -26,9 +40,20 @@ export class PostsService {
       title: title,
       content: content
     };
-    this.http.post<{ message: string }>(this.url, post).subscribe(responseData => {
-      console.log(responseData.message);
-      this.posts.push(post);
+    this.http
+      .post<{ message: string; postId: string }>(this.url, post)
+      .subscribe(responseData => {
+        const id = responseData.postId;
+        post.id = id;
+        this.posts.push(post);
+        this.postsUpdated.next([...this.posts]);
+      });
+  }
+
+  public deletePost(postId: string) {
+    this.http.delete(this.url + '/' + postId).subscribe(() => {
+      const updatedPosts = this.posts.filter(post => post.id !== postId);
+      this.posts = updatedPosts;
       this.postsUpdated.next([...this.posts]);
     });
   }
