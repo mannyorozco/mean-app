@@ -40,7 +40,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 
   // call next because you want to continue to next method
   next();
@@ -67,6 +67,18 @@ app.get('/api/posts', (req, res, next) => {
       message: 'Posts fetched succesfully!',
       posts: documents
     });
+  });
+});
+
+app.put('/api/posts/:id', (req, res, next) => {
+  const post = new Post({
+    _id: req.body.id,
+    title: req.body.title,
+    content: req.body.content
+  });
+  Post.updateOne({ _id: req.params.id }, post).then(result => {
+    console.log(result);
+    res.status(200).json({ message: 'Update successful' });
   });
 });
 

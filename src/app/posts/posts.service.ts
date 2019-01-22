@@ -40,14 +40,24 @@ export class PostsService {
       title: title,
       content: content
     };
-    this.http
-      .post<{ message: string; postId: string }>(this.url, post)
-      .subscribe(responseData => {
-        const id = responseData.postId;
-        post.id = id;
-        this.posts.push(post);
-        this.postsUpdated.next([...this.posts]);
-      });
+    this.http.post<{ message: string; postId: string }>(this.url, post).subscribe(responseData => {
+      const id = responseData.postId;
+      post.id = id;
+      this.posts.push(post);
+      this.postsUpdated.next([...this.posts]);
+    });
+  }
+
+  public updatePost(id: string, title: string, content: string) {
+    const post: Post = {
+      id: id,
+      title: title,
+      content: content
+    };
+
+    this.http.put(this.url + '/' + id, post).subscribe(res => {
+      console.log(res);
+    });
   }
 
   public deletePost(postId: string) {
@@ -60,5 +70,9 @@ export class PostsService {
 
   public getPostUpdateListener(): Observable<Post[]> {
     return this.postsUpdated.asObservable();
+  }
+
+  public getPost(id: string): Post {
+    return { ...this.posts.find(p => p.id === id) };
   }
 }

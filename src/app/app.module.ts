@@ -9,20 +9,22 @@ import { PostCreateComponent } from './posts/post-create/post-create.component';
 import { HeaderComponent } from './header/header.component';
 import { PostListComponent } from './posts/post-list/post-list.component';
 import { HttpClientModule } from '@angular/common/http';
+import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [AppComponent, HeaderComponent, PostCreateComponent, PostListComponent],
   imports: [
     BrowserModule,
-    FormsModule,
     BrowserAnimationsModule,
+    FormsModule,
     HttpClientModule,
     MatInputModule,
     MatCardModule,
     MatButtonModule,
     MatExpansionModule,
     MatToolbarModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AppRoutingModule
   ],
   providers: [],
   bootstrap: [AppComponent]
