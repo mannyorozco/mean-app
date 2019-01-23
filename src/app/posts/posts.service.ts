@@ -56,7 +56,11 @@ export class PostsService {
     };
 
     this.http.put(this.url + '/' + id, post).subscribe(res => {
-      console.log(res);
+      const updatedPost = [...this.posts];
+      const oldPostIndex = updatedPost.findIndex(p => p.id === post.id);
+      updatedPost[oldPostIndex] = post;
+      this.posts = updatedPost;
+      this.postsUpdated.next([...this.posts]);
     });
   }
 
@@ -72,7 +76,7 @@ export class PostsService {
     return this.postsUpdated.asObservable();
   }
 
-  public getPost(id: string): Post {
-    return { ...this.posts.find(p => p.id === id) };
+  public getPost(id: string): Observable<any> {
+    return this.http.get<{ _id: string; title: string; content: string }>(this.url + '/' + id);
   }
 }
