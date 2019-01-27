@@ -3,6 +3,7 @@ import { Post } from './post.model';
 import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
@@ -10,7 +11,7 @@ export class PostsService {
   private postsUpdated = new Subject<Post[]>();
   private url = 'http://localhost:3000/api/posts';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private router: Router) {}
 
   public getPosts() {
     this.http
@@ -40,12 +41,15 @@ export class PostsService {
       title: title,
       content: content
     };
-    this.http.post<{ message: string; postId: string }>(this.url, post).subscribe(responseData => {
-      const id = responseData.postId;
-      post.id = id;
-      this.posts.push(post);
-      this.postsUpdated.next([...this.posts]);
-    });
+    this.http
+      .post<{ message: string; postId: string }>(this.url, post)
+      .subscribe(responseData => {
+        const id = responseData.postId;
+        post.id = id;
+        this.posts.push(post);
+        this.postsUpdated.next([...this.posts]);
+        this.router.navigate(['/']);
+      });
   }
 
   public updatePost(id: string, title: string, content: string) {
@@ -61,6 +65,7 @@ export class PostsService {
       updatedPost[oldPostIndex] = post;
       this.posts = updatedPost;
       this.postsUpdated.next([...this.posts]);
+      this.router.navigate(['/']);
     });
   }
 
@@ -77,6 +82,8 @@ export class PostsService {
   }
 
   public getPost(id: string): Observable<any> {
-    return this.http.get<{ _id: string; title: string; content: string }>(this.url + '/' + id);
+    return this.http.get<{ _id: string; title: string; content: string }>(
+      this.url + '/' + id
+    );
   }
 }
