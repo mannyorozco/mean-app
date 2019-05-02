@@ -8,7 +8,8 @@ import {
   MatButtonModule,
   MatToolbarModule,
   MatExpansionModule,
-  MatProgressSpinnerModule
+  MatProgressSpinnerModule,
+  MatPaginatorModule
 } from '@angular/material';
 
 import { AppComponent } from './app.component';
@@ -19,12 +20,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    HeaderComponent,
-    PostCreateComponent,
-    PostListComponent
-  ],
+  declarations: [AppComponent, HeaderComponent, PostCreateComponent, PostListComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -35,6 +31,7 @@ import { AppRoutingModule } from './app-routing.module';
     MatExpansionModule,
     MatProgressSpinnerModule,
     MatToolbarModule,
+    MatPaginatorModule,
     ReactiveFormsModule,
     AppRoutingModule
   ],

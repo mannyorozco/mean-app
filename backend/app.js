@@ -1,6 +1,8 @@
+const path = require('path');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+
 
 const postsRoutes = require('./routes/posts');
 
@@ -22,10 +24,7 @@ const app = express();
 
 // connect remotely
 mongoose
-  .connect(
-    'mongodb+srv://manny:QbGKBHSa7WWOdXRn@cluster0-dfg9e.mongodb.net/node-angular?retryWrites=true',
-    { useNewUrlParser: true }
-  )
+  .connect('mongodb+srv://manny:QbGKBHSa7WWOdXRn@cluster0-dfg9e.mongodb.net/node-angular?retryWrites=true', { useNewUrlParser: true })
   .then(() => {
     console.log('Connected to cloud database!');
   })
@@ -35,6 +34,8 @@ mongoose
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+// allow request to images folder
+app.use('/images', express.static(path.join('backend/images')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
