@@ -25,7 +25,8 @@ export class PostsService {
                 title: post.title,
                 content: post.content,
                 id: post._id,
-                imagePath: post.imagePath
+                imagePath: post.imagePath,
+                creator: post.creator
               };
             }),
             maxPosts: postData.maxPosts
@@ -64,7 +65,9 @@ export class PostsService {
         id: id,
         title: title,
         content: content,
-        imagePath: image
+        imagePath: image,
+        // add id on server to prevent someone faking
+        creator: null
       };
     }
 
@@ -82,8 +85,12 @@ export class PostsService {
   }
 
   public getPost(id: string): Observable<any> {
-    return this.http.get<{ _id: string; title: string; content: string; imagePath: string }>(
-      this.url + '/' + id
-    );
+    return this.http.get<{
+      _id: string;
+      title: string;
+      content: string;
+      imagePath: string;
+      creator: string;
+    }>(this.url + '/' + id);
   }
 }
