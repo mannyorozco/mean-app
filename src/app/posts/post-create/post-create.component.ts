@@ -1,16 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { PostsService } from '../posts.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { Post } from '../post.model';
 import { mimeType } from './mime-type.validator';
+import { AuthService } from 'src/app/auth/auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-post-create',
   templateUrl: './post-create.component.html',
   styleUrls: ['./post-create.component.css']
 })
-export class PostCreateComponent implements OnInit {
+export class PostCreateComponent implements OnInit, OnDestroy {
   public enteredTitle = '';
   public enteredContent = '';
   public post: Post;
@@ -20,8 +22,13 @@ export class PostCreateComponent implements OnInit {
 
   private mode = 'create';
   private postId: string;
+  private AuthServiceSubscription: Subscription;
 
-  constructor(private postsService: PostsService, private route: ActivatedRoute) {}
+  constructor(
+    private postsService: PostsService,
+    private route: ActivatedRoute,
+    private authService: AuthService
+  ) {}
 
   ngOnInit() {
     this.form = new FormGroup({
@@ -60,6 +67,12 @@ export class PostCreateComponent implements OnInit {
         this.postId = null;
       }
     });
+
+    this.AuthServiceSubscription = this.authService
+      .getAuthStatusListener()
+      .subscribe(authStatus => {
+        this.isLoading = false;
+      });
   }
 
   public onSavePost() {
@@ -97,5 +110,11 @@ export class PostCreateComponent implements OnInit {
     };
 
     reader.readAsDataURL(file);
+  }
+
+  ngOnDestroy(): void {
+    if (this.AuthServiceSubscription) {
+      this.AuthServiceSubscription.unsubscribe();
+    }
   }
 }
