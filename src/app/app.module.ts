@@ -11,13 +11,11 @@ import { ErrorInterceptor } from './error-interceptor';
 import { ErrorDialogComponent } from './error/error.component';
 import { AngularMaterialModule } from './angular-material.module';
 import { PostsModule } from './posts/posts.module';
-import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [AppComponent, ErrorDialogComponent, HeaderComponent],
   imports: [
     AngularMaterialModule,
-    AuthModule,
     BrowserModule,
     BrowserAnimationsModule,
     PostsModule,

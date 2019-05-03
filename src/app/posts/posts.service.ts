@@ -4,19 +4,21 @@ import { Subject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
+
+const BACKEND_URL = environment.apiUrl + '/posts/';
 
 @Injectable({ providedIn: 'root' })
 export class PostsService {
   private posts: Post[] = [];
   private postsUpdated = new Subject<{ posts: Post[]; postCount: number }>();
-  private url = 'http://localhost:3000/api/posts';
 
   constructor(private http: HttpClient, private router: Router) {}
 
   public getPosts(postsPerPage: number, currentPage: number): void {
     const queryParams = `?pageSize=${postsPerPage}&page=${currentPage}`;
     this.http
-      .get<{ message: string; posts: any; maxPosts: number }>(this.url + queryParams)
+      .get<{ message: string; posts: any; maxPosts: number }>(BACKEND_URL + queryParams)
       .pipe(
         map(postData => {
           return {
@@ -46,9 +48,11 @@ export class PostsService {
     postData.append('content', content);
     postData.append('image', image, title);
 
-    this.http.post<{ message: string; post: Post }>(this.url, postData).subscribe(responseData => {
-      this.router.navigate(['/']);
-    });
+    this.http
+      .post<{ message: string; post: Post }>(BACKEND_URL, postData)
+      .subscribe(responseData => {
+        this.router.navigate(['/']);
+      });
   }
 
   public updatePost(id: string, title: string, content: string, image: File | string): void {
@@ -71,13 +75,13 @@ export class PostsService {
       };
     }
 
-    this.http.put(this.url + '/' + id, postData).subscribe(res => {
+    this.http.put(BACKEND_URL + id, postData).subscribe(res => {
       this.router.navigate(['/']);
     });
   }
 
   public deletePost(postId: string) {
-    return this.http.delete(this.url + '/' + postId);
+    return this.http.delete(BACKEND_URL + postId);
   }
 
   public getPostUpdateListener(): Observable<{ posts: Post[]; postCount: number }> {
@@ -91,6 +95,6 @@ export class PostsService {
       content: string;
       imagePath: string;
       creator: string;
-    }>(this.url + '/' + id);
+    }>(BACKEND_URL + id);
   }
 }

@@ -25,7 +25,9 @@ const app = express();
 // connect remotely
 mongoose
   .connect(
-    'mongodb+srv://manny:QbGKBHSa7WWOdXRn@cluster0-dfg9e.mongodb.net/node-angular?retryWrites=true',
+    'mongodb+srv://manny:' +
+      process.env.MONGO_ATLAS_PW +
+      '@cluster0-dfg9e.mongodb.net/node-angular?retryWrites=true',
     { useNewUrlParser: true, useCreateIndex: true }
   )
   .then(() => {
@@ -42,7 +44,10 @@ app.use('/images', express.static(path.join('backend/images')));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+  );
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 
   // call next because you want to continue to next method
